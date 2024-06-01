@@ -29,6 +29,12 @@
         </div>
       </div>
     </div>
+
+    <!-- <div class="slider-item" v-for="movie in movies" v-bind:key="movie.id">
+      <img v-bind:src="movie.imageLink" v-bind:alt="movie.title" />
+      <p>{{ movie.title }}</p>
+      <span v-if="movie.isNew" class="new-badge">New</span>
+    </div> -->
   </body>
 </template>
 
@@ -162,6 +168,16 @@ img {
 .image-container {
   background: var(--Elements-Piano-Black, rgba(28, 28, 30, 1));
   border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  background: linear-gradient(90deg, #1c1c1e 33.33%, #121212 65.62%);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.075);
+  box-shadow: 0px 8px 10px 0px rgba(150, 150, 150, 0.25);
 }
 
 .image-container p {
