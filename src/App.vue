@@ -1,26 +1,18 @@
 <template>
-  <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
-  <hello />
+  <body>
+    <swinlane_app />
+  </body>
 </template>
 
 <script>
-import hello from "./components/HelloWorld.vue";
+import swinlane_app from "./components/swimlane_app.vue";
 
 export default {
   name: "App",
   components: {
-    hello,
+    swinlane_app,
   },
 };
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>
