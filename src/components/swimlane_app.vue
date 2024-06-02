@@ -1,39 +1,48 @@
 <template>
   <body>
     <!-- <div class="swimlane">
-      <h1>Most-watched films</h1>
-      <div class="swimlane-slide">
-        <div
-          v-for="(movie, index) in firstSixImages"
-          :key="index"
-          class="image-container"
-        >
-          <img :src="movie.src" :alt="movie.title" />
-          <div class="newTag" :style="{ display: isMovieNew(movie) }">
-            <p>NEW</p>
+        <h1>Most-watched films</h1>
+        <div class="swimlane-slide">
+          <div
+            v-for="(movie, index) in firstSixImages"
+            :key="index"
+            class="image-container"
+          >
+            <img :src="movie.src" :alt="movie.title" />
+            <div class="newTag" :style="{ display: isMovieNew(movie) }">
+              <p>NEW</p>
+            </div>
+            <h3>{{ movie.title }}</h3>
           </div>
-          <h3>{{ movie.title }}</h3>
         </div>
-      </div>
-      <div class="swinlane-slider">
-        <img
-          src="@/assets/Vector.png"
-          id="slider-vector"
-          alt=""
-          style="height: 63px; width: 35px"
-        />
-      </div>
-    </div> -->
+        <div class="swinlane-slider">
+          <img
+            src="@/assets/Vector.png"
+            id="slider-vector"
+            alt=""
+            style="height: 63px; width: 35px"
+          />
+        </div>
+      </div> -->
 
     <div class="swimlane">
       <h1>Most-watched films</h1>
-      <div class="swimlane-slide" ref="slide">
+      <div
+        id="swinlane-slider-left"
+        ref="sliderLeft"
+        @click="showPreviousMovies"
+      >
+        <img
+          src="@/assets/Vector.png"
+          id="slider-vector-left"
+          style="height: 63px; width: 35px"
+        />
+      </div>
+      <div class="swimlane-slide">
         <div
-          v-for="(movie, index) in firstSixImages"
+          v-for="(movie, index) in displayedMovies"
           :key="index"
           class="image-container"
-          @mouseover="toggleSliderOnLast(index)"
-          @mouseleave="toggleSliderOnLast(-1)"
         >
           <img :src="movie.src" :alt="movie.title" />
           <div class="newTag" :style="{ display: isMovieNew(movie) }">
@@ -42,16 +51,10 @@
           <h3>{{ movie.title }}</h3>
         </div>
       </div>
-      <div
-        class="swinlane-slider"
-        :style="{ visibility: showSlider ? 'visible' : 'hidden' }"
-        @mouseover="toggleSlider(true)"
-        @mouseleave="toggleSlider(false)"
-      >
+      <div id="swinlane-slider-right" ref="sliderRight" @click="showNextMovies">
         <img
           src="@/assets/Vector.png"
           id="slider-vector"
-          alt=""
           style="height: 63px; width: 35px"
         />
       </div>
@@ -77,82 +80,10 @@ export default {
   components: {},
   data() {
     return {
-      // movies: [
-      //   {
-      //     id: 1,
-      //     title: "Oppenheimer",
-      //     imageLink: "@/assets/Oppenheimer.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 2,
-      //     title: "Past Lives",
-      //     imageLink: "@/assets/Past Lives.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 3,
-      //     title: "Polite Society",
-      //     imageLink: "@/assets/Polite Society.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 4,
-      //     title: "Robots",
-      //     imageLink: "@/assets/Robots.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 5,
-      //     title: "Sanctuary",
-      //     imageLink: "@/assets/Sanctuary.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 6,
-      //     title: "Talk To Me",
-      //     imageLink: "@/assets/Talk To Me.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 7,
-      //     title: "About My Father",
-      //     imageLink: "@/assets/About My Father.png",
-      //     isNew: true,
-      //   },
-      //   {
-      //     id: 8,
-      //     title: "Air",
-      //     imageLink: "@/assets/Air.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 9,
-      //     title: "Are You There God? It’s Me, Margaret.",
-      //     imageLink: "@/assets/Are You There God.png",
-      //     isNew: true,
-      //   },
-      //   {
-      //     id: 10,
-      //     title: "Guardians of the Galaxy: Volume 3",
-      //     imageLink: "@/assets/Guardians of the Galaxy Volume 3.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 11,
-      //     title: "Big George Foreman",
-      //     imageLink: "@/assets/Big George Foreman.png",
-      //     isNew: false,
-      //   },
-      //   {
-      //     id: 12,
-      //     title: "Beau Is Afraid",
-      //     imageLink: "@/assets/Beau Is Afraid.png",
-      //     isNew: false,
-      //   },
-      // ],
       showSlider: false,
-      movie_images: [
+      currentSlide: 0,
+      moviesPerPage: 6,
+      movie_data: [
         { src: Oppenheimer, title: "Oppenheimer", isNew: true },
         { src: PastLives, title: "Past Lives", isNew: false },
         { src: PoliteSociety, title: "Polite Society", isNew: false },
@@ -177,16 +108,28 @@ export default {
     isMovieNew(movie) {
       return movie.isNew ? "block" : "none";
     },
-    toggleSlider(value) {
-      this.showSlider = value;
+
+    showNextMovies() {
+      const totalMovies = this.movie_data.length;
+      if (this.currentSlide < totalMovies - this.moviesPerPage) {
+        this.currentSlide += this.moviesPerPage;
+        this.$refs.sliderLeft.style.visibility = "visible";
+        this.$refs.sliderRight.style.visibility = "hidden";
+      }
     },
-    toggleSliderOnLast(index) {
-      this.showSlider = index !== this.firstSixImages.length - 1;
+    showPreviousMovies() {
+      if (this.currentSlide > 0) {
+        this.currentSlide -= this.moviesPerPage;
+        this.$refs.sliderLeft.style.visibility = "hidden";
+        this.$refs.sliderRight.style.visibility = "visible";
+      }
     },
   },
   computed: {
-    firstSixImages() {
-      return this.movie_images.slice(0, 6);
+    displayedMovies() {
+      const start = this.currentSlide;
+      const end = start + this.moviesPerPage;
+      return this.movie_data.slice(start, end);
     },
   },
 };
@@ -279,12 +222,13 @@ img {
   width: 100%;
   height: 100%;
 }
-.swinlane-slider {
+
+#swinlane-slider-left {
   width: 110px;
   height: 432px;
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 0;
   background: linear-gradient(
     265.54deg,
     #060606 3.35%,
@@ -294,5 +238,32 @@ img {
   justify-items: center;
   align-items: center;
   border-radius: 10px;
+  z-index: 10;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+#slider-vector-left {
+  transform: rotate(180deg);
+}
+
+#swinlane-slider-right {
+  width: 110px;
+  height: 432px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+  background: linear-gradient(
+    265.54deg,
+    #060606 3.35%,
+    rgba(6, 6, 6, 0.7) 96.15%
+  );
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  border-radius: 10px;
+  z-index: 10;
+  cursor: pointer;
 }
 </style>
