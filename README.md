@@ -1,7 +1,7 @@
 # front_end_assignment_2
 
 ### NETLIFY LINK
-CLICK HERE(https://swimlanecomponents.netlify.app/)
+[CLICK HERE](https://swimlanecomponents.netlify.app/)
 
 ## Project setup
 ```
