@@ -1,5 +1,8 @@
 # front_end_assignment_2
 
+### NETLIFY LINK
+[CLICK HERE](https://swimlanecomponents.netlify.app/)
+
 ## Project setup
 ```
 npm install
@@ -20,5 +23,4 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
