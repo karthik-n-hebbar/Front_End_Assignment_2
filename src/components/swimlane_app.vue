@@ -43,6 +43,8 @@
           v-for="(movie, index) in displayedMovies"
           :key="index"
           class="image-container"
+          @mouseover="handleMouseOver(index)"
+          @mouseleave="handleMouseLeave(index)"
         >
           <img :src="movie.src" :alt="movie.title" />
           <div class="newTag" :style="{ display: isMovieNew(movie) }">
@@ -84,7 +86,7 @@ export default {
       currentSlide: 0,
       moviesPerPage: 6,
       movie_data: [
-        { src: Oppenheimer, title: "Oppenheimer", isNew: true },
+        { src: Oppenheimer, title: "Oppenheimer", isNew: false },
         { src: PastLives, title: "Past Lives", isNew: false },
         { src: PoliteSociety, title: "Polite Society", isNew: false },
         { src: Robots, title: "Robots", isNew: false },
@@ -113,14 +115,29 @@ export default {
       const totalMovies = this.movie_data.length;
       if (this.currentSlide < totalMovies - this.moviesPerPage) {
         this.currentSlide += this.moviesPerPage;
-        this.$refs.sliderLeft.style.visibility = "visible";
-        this.$refs.sliderRight.style.visibility = "hidden";
       }
     },
     showPreviousMovies() {
       if (this.currentSlide > 0) {
         this.currentSlide -= this.moviesPerPage;
+      }
+    },
+    handleMouseOver(index) {
+      if (index === 0) {
         this.$refs.sliderLeft.style.visibility = "hidden";
+      }
+      if (index === this.displayedMovies.length - 1) {
+        this.$refs.sliderRight.style.visibility = "hidden";
+      }
+    },
+    handleMouseLeave(index) {
+      if (index === 0 && this.currentSlide !== 0) {
+        this.$refs.sliderLeft.style.visibility = "visible";
+      }
+      if (
+        index === this.displayedMovies.length - 1 &&
+        this.currentSlide + this.moviesPerPage < this.movie_data.length
+      ) {
         this.$refs.sliderRight.style.visibility = "visible";
       }
     },
@@ -130,6 +147,19 @@ export default {
       const start = this.currentSlide;
       const end = start + this.moviesPerPage;
       return this.movie_data.slice(start, end);
+    },
+  },
+  watch: {
+    currentSlide() {
+      // Handle visibility of sliders based on currentSlide
+      this.$nextTick(() => {
+        this.$refs.sliderLeft.style.visibility =
+          this.currentSlide === 0 ? "hidden" : "visible";
+        this.$refs.sliderRight.style.visibility =
+          this.currentSlide + this.moviesPerPage >= this.movie_data.length
+            ? "hidden"
+            : "visible";
+      });
     },
   },
 };
@@ -154,7 +184,7 @@ body {
 
 .swimlane {
   width: 1320px;
-  height: 469px;
+  height: 463px;
   position: relative;
 }
 
@@ -194,7 +224,7 @@ img {
   font-family: Noto Sans;
   font-size: 14.5px;
   margin-left: 16px;
-  margin-top: 42px;
+  margin-top: 35px;
 }
 
 .newTag {
@@ -225,7 +255,7 @@ img {
 
 #swinlane-slider-left {
   width: 110px;
-  height: 432px;
+  height: 418px;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -249,7 +279,7 @@ img {
 
 #swinlane-slider-right {
   width: 110px;
-  height: 432px;
+  height: 418px;
   position: absolute;
   bottom: 0;
   right: 0;
