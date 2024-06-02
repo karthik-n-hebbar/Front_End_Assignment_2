@@ -1,30 +1,5 @@
 <template>
   <body>
-    <!-- <div class="swimlane">
-        <h1>Most-watched films</h1>
-        <div class="swimlane-slide">
-          <div
-            v-for="(movie, index) in firstSixImages"
-            :key="index"
-            class="image-container"
-          >
-            <img :src="movie.src" :alt="movie.title" />
-            <div class="newTag" :style="{ display: isMovieNew(movie) }">
-              <p>NEW</p>
-            </div>
-            <h3>{{ movie.title }}</h3>
-          </div>
-        </div>
-        <div class="swinlane-slider">
-          <img
-            src="@/assets/Vector.png"
-            id="slider-vector"
-            alt=""
-            style="height: 63px; width: 35px"
-          />
-        </div>
-      </div> -->
-
     <div class="swimlane" v-cloak>
       <h1>Most-watched films</h1>
       <div
@@ -195,7 +170,6 @@ export default {
   },
   watch: {
     currentSlide() {
-      // Handle visibility of sliders based on currentSlide
       this.$nextTick(() => {
         this.$refs.sliderLeft.style.visibility =
           this.currentSlide === 0 ? "hidden" : "visible";
