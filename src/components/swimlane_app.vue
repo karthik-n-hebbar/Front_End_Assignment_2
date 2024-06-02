@@ -25,7 +25,7 @@
         </div>
       </div> -->
 
-    <div class="swimlane">
+    <div class="swimlane" v-cloak>
       <h1>Most-watched films</h1>
       <div
         id="swinlane-slider-left"
