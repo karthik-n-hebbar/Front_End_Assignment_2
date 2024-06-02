@@ -31,6 +31,8 @@
         id="swinlane-slider-left"
         ref="sliderLeft"
         @click="showPreviousMovies"
+        @keydown.enter="showPreviousMovies"
+        tabindex="0"
       >
         <img
           src="@/assets/Vector.png"
@@ -42,9 +44,16 @@
         <div
           v-for="(movie, index) in displayedMovies"
           :key="index"
+          :ref="'movie' + index"
           class="image-container"
           @mouseover="handleMouseOver(index)"
           @mouseleave="handleMouseLeave(index)"
+          @focus="handleFocus(index)"
+          @blur="handleBlur(index)"
+          @keydown.left="navigateLeft(index)"
+          @keydown.right="navigateRight(index)"
+          @keydown.enter="selectMovie(movie)"
+          tabindex="0"
         >
           <img :src="movie.src" :alt="movie.title" />
           <div class="newTag" :style="{ display: isMovieNew(movie) }">
@@ -53,7 +62,13 @@
           <h3>{{ movie.title }}</h3>
         </div>
       </div>
-      <div id="swinlane-slider-right" ref="sliderRight" @click="showNextMovies">
+      <div
+        id="swinlane-slider-right"
+        ref="sliderRight"
+        @click="showNextMovies"
+        @keydown.enter="showNextMovies"
+        tabindex="0"
+      >
         <img
           src="@/assets/Vector.png"
           id="slider-vector"
@@ -141,6 +156,35 @@ export default {
         this.$refs.sliderRight.style.visibility = "visible";
       }
     },
+    handleFocus(index) {
+      this.handleMouseOver(index);
+    },
+    handleBlur(index) {
+      this.handleMouseLeave(index);
+    },
+    navigateLeft(index) {
+      if (index === 0) {
+        this.showPreviousMovies();
+        this.$nextTick(() => {
+          this.$refs.sliderLeft.focus();
+        });
+      } else {
+        this.$refs[`movie${index - 1}`][0].focus();
+      }
+    },
+    navigateRight(index) {
+      if (index === this.displayedMovies.length - 1) {
+        this.showNextMovies();
+        this.$nextTick(() => {
+          this.$refs.sliderRight.focus();
+        });
+      } else {
+        this.$refs[`movie${index + 1}`][0].focus();
+      }
+    },
+    selectMovie(movie) {
+      console.log(`Selected movie: ${movie.title}`);
+    },
   },
   computed: {
     displayedMovies() {
@@ -167,10 +211,16 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+[v-cloak] {
+  display: none;
+}
+
 * {
   margin: 0px;
   padding: 0px;
 }
+
 body {
   background: rgba(68, 68, 68, 1);
   color: rgba(255, 255, 255, 1);
@@ -253,23 +303,33 @@ img {
   height: 100%;
 }
 
-#swinlane-slider-left {
+#swinlane-slider-left,
+#swinlane-slider-right {
   width: 110px;
   height: 418px;
   position: absolute;
   bottom: 0;
-  left: 0;
-  background: linear-gradient(
-    265.54deg,
-    #060606 3.35%,
-    rgba(6, 6, 6, 0.7) 96.15%
-  );
   display: grid;
   justify-items: center;
   align-items: center;
   border-radius: 10px;
   z-index: 10;
   cursor: pointer;
+  outline: none;
+}
+
+#swinlane-slider-left:focus,
+#swinlane-slider-right:focus {
+  border: 2px solid rgba(255, 159, 10, 1);
+}
+
+#swinlane-slider-left {
+  left: 0;
+  background: linear-gradient(
+    265.54deg,
+    #060606 3.35%,
+    rgba(6, 6, 6, 0.7) 96.15%
+  );
   visibility: hidden;
 }
 
@@ -278,22 +338,11 @@ img {
 }
 
 #swinlane-slider-right {
-  width: 110px;
-  height: 418px;
-  position: absolute;
-  bottom: 0;
   right: 0;
-  z-index: 1;
   background: linear-gradient(
     265.54deg,
     #060606 3.35%,
     rgba(6, 6, 6, 0.7) 96.15%
   );
-  display: grid;
-  justify-items: center;
-  align-items: center;
-  border-radius: 10px;
-  z-index: 10;
-  cursor: pointer;
 }
 </style>
